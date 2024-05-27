@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Image from "next/image";
 import { AiOutlineSearch, AiOutlineClose } from "react-icons/ai";
-import movieTheaterPlaceholder from '@/assets/images/movieTheatrePlaceholder.webp';
+import movieTheaterPlaceholder from "@/assets/images/movieTheatrePlaceholder.webp";
 
 const Location = () => {
   const [facilities, setFacilities] = useState([]);
@@ -42,7 +42,6 @@ const Location = () => {
     }
   };
 
-
   useEffect(() => {
     const fetchFacilities = async () => {
       try {
@@ -54,14 +53,16 @@ const Location = () => {
         setFacilities(response.data);
         setLoading(false);
       } catch (error) {
-        console.error("Error getting user location or fetching facilities:", error);
+        console.error(
+          "Error getting user location or fetching facilities:",
+          error
+        );
         setShowZipCodeInput(true);
         setLoading(false);
       }
     };
     fetchFacilities();
   }, []);
-
 
   if (loading) {
     <div className="flex justify-center items-center h-screen w-full">
@@ -102,16 +103,27 @@ const Location = () => {
           </div>
         </form>
       ) : (
-        <div className = 'p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {facilities.map((facility, index)=>(
-            <div key = {index} className="text-black">
-              <Image src = {movieTheaterPlaceholder} alt = "Movie-Theatre" width = {400} height={300} className="w-full h-[50vh] object-cover rounded-lg" />
+        <div className="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {facilities.map((facility, index) => (
+            <div key={index} className="text-black">
+              <Image
+                src={movieTheaterPlaceholder}
+                alt={facility.name}
+                width={500}
+                height={500}
+                layout="responsive" // Makes the image responsive
+                priority = {true}
+                className="w-full h-[50vh] object-cover rounded-lg"
+              />
               <h1 className="text-center">{facility.name}</h1>
-              <p className="text-center">{facility.rating === 0 ? null : `${facility.rating} Stars`}</p>
               <p className="text-center">
-              Availability : {""}
-              {facility.available?.open_now ? "open" : "closed"}</p>
-              </div>
+                {facility.rating === 0 ? null : `${facility.rating} Stars`}
+              </p>
+              <p className="text-center">
+                Availability : {""}
+                {facility.available?.open_now ? "open" : "closed"}
+              </p>
+            </div>
           ))}
         </div>
       )}

@@ -1,6 +1,5 @@
-import axios from "axios";
-import React from "react";
-import { useState } from "react";
+"use client";
+import React, { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
@@ -10,6 +9,8 @@ import IconButton from "@mui/material/IconButton";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import Badge from "@mui/material/Badge";
 import YouTube from "react-youtube";
+import axios from "axios";
+import Image from "next/image";
 
 const Trending = ({ trendingData, loading }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,7 +28,7 @@ const Trending = ({ trendingData, loading }) => {
     setSelectedTitle(title);
     setOpen(true);
     setShowTrailer(false);
-    setTrailerKey(null);
+    setTrailerKey(null); // Reset trailer key
   };
 
   const handleClose = () => {
@@ -46,23 +47,22 @@ const Trending = ({ trendingData, loading }) => {
       setTrailerKey(response.data.trailerKey);
       setShowTrailer(true);
     } catch (error) {
-      console.error("Failed to fetch Trailer:", error);
+      console.error("Failed to fetch trailer:", error);
     }
   };
- 
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = trendingData.slice(indexOfFirstItem, indexOfLastItem);
 
-
-  const totalPages = Math.ceil(trendingData.length/itemsPerPage)
-
+  const totalPages = Math.ceil(trendingData.length / itemsPerPage);
 
   if (loading) {
-    <div className="flex justify-center items-center h-screen w-full">
-      <div className="animate-spin rounded-full h-32 w-32 border-2 border-b-2 border-green-500"></div>
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-screen w-full">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-500"></div>
+      </div>
+    );
   }
 
   return (
@@ -72,6 +72,7 @@ const Trending = ({ trendingData, loading }) => {
           <div
             key={index}
             className="p-2 md:w-[20%] w-[50%] capitalize overflow-hidden cursor-pointer transform transition duration-300 ease-in-out hover:shadow-lg hover:shadow-black"
+            onClick={() => handleClickOpen(trending)}
           >
             <Badge
               badgeContent={`${trending.vote_average.toFixed(1)}★`}
@@ -91,13 +92,15 @@ const Trending = ({ trendingData, loading }) => {
               }}
             >
               <div className="flex flex-col items-center">
-                <img
-                  className="w-full h-auto rounded-md transition duration-300 ease-in-out"
+                <Image
                   src={`https://image.tmdb.org/t/p/original${trending.poster_path}`}
                   alt={trending.original_title || trending.title}
-                  onClick={() => handleClickOpen(trending)}
+                  width={500}
+                  height={500}
+                  layout="responsive" // Makes the image responsive
+                  priority={true} // High-priority image, preload
                 />
-                <h1 className="text-center md:font-medium md:text-sm hover:text-md-500 transition duration-500">
+                <h1 className="text-center md:font-medium md:text-sm hover:text-red-500 transition duration-300">
                   {trending.original_title ||
                     trending.title ||
                     trending.name ||
@@ -112,28 +115,32 @@ const Trending = ({ trendingData, loading }) => {
           </div>
         ))}
       </div>
+
       <div className="flex justify-center w-full pt-10 p-3">
-        <Stack spacing={2}>
-          <Pagination
-            count={totalPages}
-            onChange={handlePageChange}
-            page={currentPage}
-            variant="outlined"
-            color="primary"
-            className="pagination-custom"
-            sx={{
-              "& .MuiPaginationItem-page, & .MuiPaginationItem-previous, & .MuiPaginationItem-next":
-                {
-                  color: "black",
-                },
-              "& .Mui-selected, & .Mui-selected:hover, & .MuiPaginationItem-previous:hover, & .MuiPaginationItem-next:hover":
-                {
-                  color: "black",
-                },
-            }}
-          />
-        </Stack>
+        {totalPages > 1 && (
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              variant="outlined"
+              color="primary"
+              className="pagination-custom"
+              sx={{
+                "& .MuiPaginationItem-page, & .MuiPaginationItem-previous, & .MuiPaginationItem-next":
+                  {
+                    color: "black",
+                  },
+                "& .Mui-selected, & .Mui-selected:hover, & .MuiPaginationItem-previous:hover, & .MuiPaginationItem-next:hover":
+                  {
+                    color: "black",
+                  },
+              }}
+            />
+          </Stack>
+        )}
       </div>
+
       <Dialog
         open={open}
         onClose={handleClose}
@@ -158,37 +165,54 @@ const Trending = ({ trendingData, loading }) => {
         </DialogTitle>
         <DialogContent className="flex flex-col items-center">
           {selectedTitle?.media_type === "tv" && selectedTitle?.poster_path && (
-            <img
-              className="w-full max-w-35 h-auto mb-4"
-              src={`https://image.tmdb.org/t/p/original${selectedTitle?.poster_path}`}
-              alt={selectedTitle?.original_title || selectedTitle?.title}
-            />
+            <Image
+            src={`https://image.tmdb.org/t/p/original${selectedTitle?.poster_path}`}
+            alt={selectedTitle?.original_title || selectedTitle?.title}
+            width={500}
+            height={500}
+            layout="responsive" // Makes the image responsive
+            priority={true} // High-priority image, preload
+          />
+            
           )}
           <p className="mb-4">{selectedTitle?.overview}</p>
           {selectedTitle?.media_type === "movie" && (
             <>
-              {!showTrailer && (
-                <IconButton
-                  color="primary"
-                  onClick={() =>
-                    handlePlayTrailer(
-                      selectedTitle?.media_type,
-                      selectedTitle?.id
-                    )
-                  }
-                  aria-label="play trailer"
-                  className="mb-4"
-                >
-                  <PlayArrowIcon />
-                </IconButton>
-              )}
-              {showTrailer && trailerKey && (
-                <div className="w-full flex justify-center text-center">
-                  <div className="aspect-w-16 aspect-h-9 w-full">
-                    <YouTube videoId = {trailerKey}className="w-full h-full" />
+              <div className="sm:hidden">
+                  <Image
+                  src={`https://image.tmdb.org/t/p/original${selectedTitle?.poster_path}`}
+                  alt={selectedTitle?.original_title || selectedTitle?.title}
+                  width={500}
+                  height={500}
+                  layout="responsive" // Makes the image responsive
+                  priority={true} // High-priority image, preload
+                />
+                
+              </div>
+              <div className="hidden sm:block">
+                {!showTrailer && (
+                  <IconButton
+                    color="primary"
+                    onClick={() =>
+                      handlePlayTrailer(
+                        selectedTitle?.media_type,
+                        selectedTitle?.id
+                      )
+                    }
+                    aria-label="play trailer"
+                    className="m-4"
+                  >
+                    <PlayArrowIcon />
+                  </IconButton>
+                )}
+                {showTrailer && trailerKey && (
+                  <div className="w-full flex justify-center text-center">
+                    <div className="aspect-w-16 aspect-h-9 w-full">
+                      <YouTube videoId={trailerKey} className="w-full h-full" />
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </>
           )}
         </DialogContent>

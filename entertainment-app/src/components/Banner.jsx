@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 const getData = async () => {
@@ -16,7 +17,7 @@ const getData = async () => {
       }
     );
     if (!response.ok) {
-      throw new Error(`Http error! Status:${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
     const results = data.results;
@@ -25,36 +26,40 @@ const getData = async () => {
     return { movie, truncate };
   } catch (error) {
     console.error("Failed to fetch upcoming movies:", error);
-    return { movie: null, truncate: null };
+    return { movie: null, truncate: null, results: null };
   }
 };
 
 const Banner = async () => {
   const { movie, truncate } = await getData();
 
-  return(
+  return (
     <div className="w-full h-full pt-[8vh]">
       {movie && (
         <div className="relative w-full h-full">
-          <img src = {`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-          alt={movie.title}
-          className = 'w-full object-cover h-[100vh] sm:h-[80vh]'
-          />
-          <div className="absolute bottom-[12%] left-0 from-black to-transparent p-4 w-full sm:w-[50%]">
-        <h1 className="text-white text-2xl sm:text-4xl font-bold">{movie.title}</h1>
-        <p className="text-gray-200 text-sm sm:text-base mt-2">
-          Release Date: {movie.release_date}
-        </p>
-        <p className="text-gray-300 text-sm sm:text-base mt-2">
-          {truncate(movie.overview, 150)}
-        </p>
+            <Image 
+                  src={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+                  alt={movie.title}
+                  width={500}
+                  height={500}
+                  layout="responsive" // Makes the image responsive
+                  priority={true} // High-priority image, preload
+                  />
+          <div className="absolute md:bottom-[16%] bottom-[1%] left-0 bg-gradient-to-t from-black to-transparent p-4 w-full sm:w-[50%]">
+            <h1 className="text-white text-2xl sm:text-4xl font-bold">
+              {movie.title}
+            </h1>
+            <p className="text-gray-300 text-sm sm:text-base mt-2">
+              Release Date: {movie.release_date}
+            </p>
+            <p className="text-gray-300 text-sm sm:text-base mt-2">
+              {truncate(movie.overview, 100)}
+            </p>
           </div>
-          </div>
+        </div>
       )}
-
     </div>
-  )
- 
+  );
 };
 
 export default Banner;
