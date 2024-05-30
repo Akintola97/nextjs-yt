@@ -124,7 +124,12 @@ const Movie = ({ movieData, loading }) => {
       </div>
       <div className="w-full h-full flex flex-wrap">
         {currentItems.map((movie, index) => (
-          <div key={index} className="p-2 md:w-[20%] w-[50%] capitalize overflow-hidden cursor-pointer transform transition duration-300 ease-in-out hover:shadow-lg hover:shadow-black">
+          // <div key={index} className="p-2 md:w-[20%] w-[50%] capitalize overflow-hidden cursor-pointer transform transition duration-300 ease-in-out hover:shadow-lg hover:shadow-black">
+          <div 
+          key={index} 
+          className="p-2 md:w-[20%] w-[50%] capitalize overflow-hidden cursor-pointer transform transition duration-300 ease-in-out hover:shadow-lg hover:shadow-black"
+          onClick={() => handleClickOpen(movie)}
+        >
             <Badge
               badgeContent={`${movie.vote_average.toFixed(1)}★`}
               color="primary"
