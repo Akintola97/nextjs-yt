@@ -1,30 +1,64 @@
 "use client";
 
-import { useAuth } from "@/context/authContext";
-import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import wallpaper from "@/assets/images/wallpaper.webp";
 
-export default function LoginPage() {
-  const { fetchData } = useAuth();
+export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [username, setUsername] = useState("");
   const router = useRouter();
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     try {
-      await axios.post("/api/login", { email, password });
-      await fetchData();
-      router.push("/hero");
+      const registerResponse = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        cache: "no-cache",
+        body: JSON.stringify({
+          email,
+          password,
+          username,
+        }),
+      });
+      if (registerResponse.status === 200) {
+        await registerResponse.json();
+        const loginResponse = await fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        });
+        if (loginResponse.status === 200) {
+          await loginResponse.json();
+          router.push("/hero");
+        } else {
+          console.error(
+            "Login failed after registration:",
+            loginResponse.status
+          );
+        }
+      } else {
+        console.error("Registration failed:", registerResponse.status);
+      }
+      setUsername("");
+      setEmail("");
+      setPassword("");
     } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "An error occurred. Please try again.";
-      setError(errorMessage);
+      console.error(
+        "An error occurred during the registration or login process:",
+        error
+      );
     }
   };
 
@@ -46,9 +80,26 @@ export default function LoginPage() {
       >
         <div className="bg-transparent p-8 rounded-lg shadow-xl backdrop-filter backdrop-blur-lg">
           <h2 className="text-3xl font-semibold mb-6 text-center text-white">
-            Login
+            Register
           </h2>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div>
+              <label
+                htmlFor="Username"
+                className="block text-white font-bold mb-2"
+              >
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                className="w-full rounded-lg border py-2 px-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setUsername(e.target.value)}
+                value={username}
+                placeholder="Username"
+                required
+              />
+            </div>
             <div>
               <label
                 htmlFor="Email"
@@ -82,14 +133,13 @@ export default function LoginPage() {
                 placeholder="Password"
                 required
               />
-              {error && <p className="text-white">{error}</p>}
             </div>
             <div className="flex justify-between items-center">
               <button
                 type="submit"
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-lg focus:outline-none focus:shadow-outline"
               >
-                Sign In
+                Register
               </button>
             </div>
           </form>
