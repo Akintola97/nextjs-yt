@@ -26,7 +26,7 @@ const Movie = ({ movieData, loading }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/searchMovies", { movieSearch });
+      const response = await axios.post("/api/searchmovies", { movieSearch });
       if (response.data.results.length > 0) {
         setSearchData(response.data.results);
         setCurrentPage(1);

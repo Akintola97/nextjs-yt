@@ -21,7 +21,7 @@ const Tv = ({ tvData, loading }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/searchTv", { tvSearch });
+      const response = await axios.post("/api/searchtv", { tvSearch });
       if (response.data.results.length > 0) {
         setSearchData(response.data.results);
         setCurrentPage(1);

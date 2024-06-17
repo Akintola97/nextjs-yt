@@ -1,4 +1,5 @@
 import Banner from "@/components/Banner";
+import Chatbot from "@/components/Chatbot";
 import HeadlineNav from "@/components/HeadlineNav";
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
     <>
       <Banner />
       <HeadlineNav />
+      <Chatbot />
     </>
   );
 }
