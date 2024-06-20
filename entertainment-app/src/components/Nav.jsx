@@ -42,7 +42,7 @@ const Nav = () => {
           <>
             <h2 className="text-[1.95vmin] sm:text-[1.75vmin]">Hi, {user}</h2>
             <Link href='/location'>
-              <h2 className="text-[1.95vmin] sm:text-[1.75vmin]">Location</h2>
+              <h2 className="text-[1.95vmin] sm:text-[1.75vmin]">Theatres</h2>
             </Link>
           </>
         ) : null}

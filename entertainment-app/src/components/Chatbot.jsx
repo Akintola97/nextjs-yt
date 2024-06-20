@@ -102,7 +102,7 @@ const Chatbot = () => {
             <div ref = {messageEndRef} />
             {isTyping && <p className="italic text-left m-2">Typing...</p>}
           </div>
-          <TextField fullWidth variant = 'outlined' placeholder="Type your message..." value={userInput} onChange={(e)=>setUserInput(e.target.value)} onKeyPress={(e)=>(e.key === "Enter" ? handleSendMessages() : null)} margin = 'normal' className="bg-white" />
+          <TextField fullWidth variant = 'outlined' placeholder="Movie recommendations, synopsis..." value={userInput} onChange={(e)=>setUserInput(e.target.value)} onKeyPress={(e)=>(e.key === "Enter" ? handleSendMessages() : null)} margin = 'normal' className="bg-white" />
             <Button onClick={handleSendMessages} endIcon= {<SendIcon />} color="primary" variant="contained" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-lg mt-2">
             Send
             </Button>

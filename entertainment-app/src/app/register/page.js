@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/context/authContext";
 import wallpaper from "@/assets/images/wallpaper.webp";
 
 export default function RegisterPage() {
@@ -10,6 +11,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const router = useRouter();
+  const { fetchData } = useAuth();
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -40,7 +42,7 @@ export default function RegisterPage() {
           }),
         });
         if (loginResponse.status === 200) {
-          await loginResponse.json();
+          await fetchData();
           router.push("/hero");
         } else {
           console.error(
