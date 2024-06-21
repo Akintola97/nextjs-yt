@@ -16,13 +16,8 @@ const AuthProvider = ({ children }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get("/api/user");
-      if (response.data && response.data.username) {
-        setUser(response.data.username);
-        setLoading(false);
-      } else {
-        setUser(null);
-        setLoading(false);
-      }
+      setUser(response.data.user.username);
+      setLoading(false);
     } catch (error) {
       console.log(error);
       setUser(null);
@@ -39,9 +34,7 @@ const AuthProvider = ({ children }) => {
       {!loading ? (
         children
       ) : (
-        <div className="w-full min-h-screen pt-[10vh] bg-gray-900 flex justify-center items-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-        </div>
+        null
       )}
     </AuthContext.Provider>
   );
